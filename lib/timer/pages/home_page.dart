@@ -23,69 +23,98 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       /// Título de la página
       appBar: AppBar(
-        backgroundColor: const Color(0xFF443A5F),
-        title: const Text(
-          'Timer',
-          style: TextStyle(color: Colors.white),
+        backgroundColor: Colors.white,
+        title: const Center(
+          child: Text(
+            'ASALTO TIME',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          ),
         ),
         actions: [
           IconButton(
               onPressed: () {
                 ///TODO Reiniciar el timer
               },
-              icon: const Icon(Icons.restart_alt_outlined))
+              icon: const Icon(Icons.settings))
         ],
       ),
 
       /// Contador
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Container(
-                    color: const Color(0xFF443A5F),
-                    height: 200,
-                    child: Center(
-                      child: Text(
-                        formatedTime(timer),
-                        style: const TextStyle(
-                            fontSize: 36,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
+            Expanded(
+                child: Center(
+              child: SizedBox(
+                child: Text(
+                  formatedTime(timer),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontSize: 120, fontWeight: FontWeight.bold),
+                ),
+              ),
+            )),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 60),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ElevatedButton(
+                      onPressed: () {
+                        ref.read(timerProvider.notifier).resetTimer();
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          elevation: 5,
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(20)),
+                      // clipBehavior: ClipRRect(borderRadius: BorderRadius.circular(10),),
+                      child: const Icon(
+                        Icons.loop,
+                        color: Colors.black,
+                        size: 25,
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              IconButton(
-                onPressed: () {
-                  ref.read(timerProvider.notifier).startTimer();
-                },
-                icon: const Icon(Icons.play_arrow_rounded),
-                style: const ButtonStyle(
-                    backgroundColor:
-                    MaterialStatePropertyAll(Color(0xFFE76963),),
-                    iconColor: MaterialStatePropertyAll(Colors.white)),
-              ),
-              const SizedBox(width: 20),
-              IconButton(
-                onPressed: () {
-                  ref.read(timerProvider.notifier).stopTimer();
-                },
-                icon: const Icon(Icons.stop_rounded),
-                style: const ButtonStyle(
-                    backgroundColor:
-                    MaterialStatePropertyAll(Color(0xFF443A5F),),
-                    iconColor: MaterialStatePropertyAll(Colors.white)),
-              ),
-            ])
+                    !ref.read(timerProvider.notifier).isActivateTime
+                        ? Expanded(
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  ref.read(timerProvider.notifier).startTimer();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    elevation: 5,
+                                    shape: const CircleBorder(),
+                                    padding: const EdgeInsets.all(20)),
+                                child: const Icon(
+                                  Icons.play_arrow_rounded,
+                                  size: 35,
+                                  color: Colors.black,
+                                )),
+                          )
+                        : Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                ref.read(timerProvider.notifier).stopTimer();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  elevation: 5,
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(20)),
+                              child: const Icon(
+                                Icons.pause,
+                                size: 35,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                  ]),
+            )
           ],
         ),
       ),
