@@ -56,10 +56,10 @@ class HomeScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
-              "1/10",
+             Text(
+              "${timer.asaltoActual}/12",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
             ),
             Expanded(
                 child: Container(
