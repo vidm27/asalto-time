@@ -18,7 +18,17 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final int timer = ref.watch(timerProvider);
+    final timer = ref.watch(timerProvider);
+    final timerNotifier = ref.watch(timerProvider.notifier);
+
+    Color getBackground(){
+      if(timer.isRunning && timer.isSecondBreak == false){
+        return Colors.red;
+      }else if(timer.isRunning && timer.isSecondBreak){
+        return Colors.green;
+      }
+      return Colors.white;
+    }
 
     return Scaffold(
       /// Título de la página
@@ -46,17 +56,23 @@ class HomeScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const Text(
+              "1/10",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+            ),
             Expanded(
-                child: Center(
-              child: SizedBox(
-                child: Text(
-                  formatedTime(timer),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      fontSize: 120, fontWeight: FontWeight.bold),
-                ),
-              ),
-            )),
+                child: Container(
+                  color: getBackground(),
+                  child: Center(
+                    child: Text(
+                      formatedTime(timer.seconds),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 120, fontWeight: FontWeight.bold, color: timer.isRunning ? Colors.white : Colors.black ),
+                    ),
+                  ),
+                )),
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 60),
@@ -79,7 +95,7 @@ class HomeScreen extends ConsumerWidget {
                         size: 25,
                       ),
                     ),
-                    !ref.read(timerProvider.notifier).isActivateTime
+                    !ref.read(timerProvider.notifier).isActivate
                         ? Expanded(
                             child: ElevatedButton(
                                 onPressed: () {
@@ -99,7 +115,7 @@ class HomeScreen extends ConsumerWidget {
                         : Expanded(
                             child: ElevatedButton(
                               onPressed: () {
-                                ref.read(timerProvider.notifier).stopTimer();
+                                ref.read(timerProvider.notifier).pauseTimer();
                               },
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.black,
@@ -121,5 +137,6 @@ class HomeScreen extends ConsumerWidget {
 
       /// Play - Stop
     );
+
   }
 }
