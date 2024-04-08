@@ -1,14 +1,20 @@
-import 'dart:async';
-
 import 'package:asalto_time/timer/provider/timer_provider.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   static String name = "home_screen";
 
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
+
+  @override
+  HomeScreenState createState() => HomeScreenState();
+}
+
+class HomeScreenState extends ConsumerState<HomeScreen> {
+  final player = AudioPlayer();
 
   String formatedTime(int timer) {
     final minutes = ((timer ~/ 60) % 60).toString().padLeft(2, '0');
@@ -17,14 +23,19 @@ class HomeScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final timer = ref.watch(timerProvider);
-    final timerNotifier = ref.watch(timerProvider.notifier);
+  void initState() {
+    super.initState();
+    ref.read(timerProvider);
+  }
 
-    Color getBackground(){
-      if(timer.isRunning && timer.isSecondBreak == false){
+  @override
+  Widget build(BuildContext context) {
+    final timer = ref.watch(timerProvider);
+
+    Color getBackground() {
+      if (timer.isRunning && timer.isSecondBreak == false) {
         return Colors.red;
-      }else if(timer.isRunning && timer.isSecondBreak){
+      } else if (timer.isRunning && timer.isSecondBreak) {
         return Colors.green;
       }
       return Colors.white;
@@ -56,7 +67,7 @@ class HomeScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-             Text(
+            Text(
               "${timer.asaltoActual}/12",
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
@@ -69,7 +80,9 @@ class HomeScreen extends ConsumerWidget {
                       formatedTime(timer.seconds),
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontSize: 120, fontWeight: FontWeight.bold, color: timer.isRunning ? Colors.white : Colors.black ),
+                          fontSize: 120,
+                          fontWeight: FontWeight.bold,
+                          color: timer.isRunning ? Colors.white : Colors.black),
                     ),
                   ),
                 )),
@@ -82,6 +95,7 @@ class HomeScreen extends ConsumerWidget {
                     ElevatedButton(
                       onPressed: () {
                         ref.read(timerProvider.notifier).resetTimer();
+                        // player.play(source)
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
@@ -97,38 +111,39 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     !ref.read(timerProvider.notifier).isActivate
                         ? Expanded(
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  ref.read(timerProvider.notifier).startTimer();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    elevation: 5,
-                                    shape: const CircleBorder(),
-                                    padding: const EdgeInsets.all(20)),
-                                child: const Icon(
-                                  Icons.play_arrow_rounded,
-                                  size: 35,
-                                  color: Colors.black,
-                                )),
-                          )
+                      child: ElevatedButton(
+                          onPressed: () {
+                            ref.read(timerProvider.notifier).startTimer();
+
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              elevation: 5,
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(20)),
+                          child: const Icon(
+                            Icons.play_arrow_rounded,
+                            size: 35,
+                            color: Colors.black,
+                          )),
+                    )
                         : Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                ref.read(timerProvider.notifier).pauseTimer();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black,
-                                  elevation: 5,
-                                  shape: const CircleBorder(),
-                                  padding: const EdgeInsets.all(20)),
-                              child: const Icon(
-                                Icons.pause,
-                                size: 35,
-                                color: Colors.white,
-                              ),
-                            ),
-                          )
+                      child: ElevatedButton(
+                        onPressed: () {
+                          ref.read(timerProvider.notifier).pauseTimer();
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black,
+                            elevation: 5,
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(20)),
+                        child: const Icon(
+                          Icons.pause,
+                          size: 35,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
                   ]),
             )
           ],
@@ -137,6 +152,5 @@ class HomeScreen extends ConsumerWidget {
 
       /// Play - Stop
     );
-
   }
 }
