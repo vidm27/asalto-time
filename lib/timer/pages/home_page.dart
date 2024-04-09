@@ -67,25 +67,33 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              "${timer.asaltoActual}/12",
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+            Container(
+              padding: EdgeInsets.all(10),
+              width: double.infinity,
+              color: getBackground(),
+              child: Text(
+                "${timer.asaltoActual}/12",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 35,
+                    fontWeight: FontWeight.bold,
+                    color: timer.isRunning ? Colors.white : Colors.black),
+              ),
             ),
             Expanded(
                 child: Container(
-                  color: getBackground(),
-                  child: Center(
-                    child: Text(
-                      formatedTime(timer.seconds),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 120,
-                          fontWeight: FontWeight.bold,
-                          color: timer.isRunning ? Colors.white : Colors.black),
-                    ),
-                  ),
-                )),
+              color: getBackground(),
+              child: Center(
+                child: Text(
+                  formatedTime(timer.seconds),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 120,
+                      fontWeight: FontWeight.bold,
+                      color: timer.isRunning ? Colors.white : Colors.black),
+                ),
+              ),
+            )),
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 60),
@@ -111,39 +119,38 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     !ref.read(timerProvider.notifier).isActivate
                         ? Expanded(
-                      child: ElevatedButton(
-                          onPressed: () {
-                            ref.read(timerProvider.notifier).startTimer();
-
-                          },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              elevation: 5,
-                              shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(20)),
-                          child: const Icon(
-                            Icons.play_arrow_rounded,
-                            size: 35,
-                            color: Colors.black,
-                          )),
-                    )
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  ref.read(timerProvider.notifier).startTimer();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    elevation: 5,
+                                    shape: const CircleBorder(),
+                                    padding: const EdgeInsets.all(20)),
+                                child: const Icon(
+                                  Icons.play_arrow_rounded,
+                                  size: 35,
+                                  color: Colors.black,
+                                )),
+                          )
                         : Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          ref.read(timerProvider.notifier).pauseTimer();
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            elevation: 5,
-                            shape: const CircleBorder(),
-                            padding: const EdgeInsets.all(20)),
-                        child: const Icon(
-                          Icons.pause,
-                          size: 35,
-                          color: Colors.white,
-                        ),
-                      ),
-                    )
+                            child: ElevatedButton(
+                              onPressed: () {
+                                ref.read(timerProvider.notifier).pauseTimer();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  elevation: 5,
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(20)),
+                              child: const Icon(
+                                Icons.pause,
+                                size: 35,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
                   ]),
             )
           ],
