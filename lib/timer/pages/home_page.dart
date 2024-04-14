@@ -3,6 +3,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   static String name = "home_screen";
@@ -31,6 +32,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final timer = ref.watch(timerProvider);
+    final configRound = ref.watch(roundConfigProvider);
 
     Color getBackground() {
       if (timer.isRunning && timer.isSecondBreak == false) {
@@ -55,7 +57,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
         actions: [
           IconButton(
               onPressed: () {
-                ///TODO Reiniciar el timer
+                context.push("/config-round");
               },
               icon: const Icon(Icons.settings))
         ],
@@ -72,7 +74,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
               width: double.infinity,
               color: getBackground(),
               child: Text(
-                "${timer.asaltoActual}/12",
+                "${timer.asaltoActual}/${configRound.totalRounds}",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 35,
@@ -103,14 +105,12 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                     ElevatedButton(
                       onPressed: () {
                         ref.read(timerProvider.notifier).resetTimer();
-                        // player.play(source)
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           elevation: 5,
                           shape: const CircleBorder(),
                           padding: const EdgeInsets.all(20)),
-                      // clipBehavior: ClipRRect(borderRadius: BorderRadius.circular(10),),
                       child: const Icon(
                         Icons.loop,
                         color: Colors.black,
