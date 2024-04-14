@@ -3,47 +3,17 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:asalto_time/timer/model/round_model.dart';
+import 'package:asalto_time/timer/model/round_config.dart';
 
-// final roundTimerNotifierProvider = StateNotifierProvider();
 
-class RoundNotifier extends StateNotifier<RoundModel> {
-  RoundNotifier() : super(RoundModel(timeRound: 120, currentRound: 1));
-}
-
-class RoundCounter {
-  final int seconds;
-  final bool isRunning;
-  final bool isSecondBreak;
-  final int asaltoActual;
-  final int secondsReset;
-
-  RoundCounter(
-      {this.seconds = 15,
-      this.secondsReset = 15,
-      this.isRunning = false,
-      this.isSecondBreak = false,
-      this.asaltoActual = 1});
-
-  RoundCounter copyWith(
-          {int? seconds,
-          int? secondsReset,
-          bool? isRunning,
-          bool? isSecondBreak,
-          int? asaltoActual}) =>
-      RoundCounter(
-          seconds: seconds ?? this.seconds,
-          secondsReset: secondsReset ?? this.secondsReset,
-          isRunning: isRunning ?? this.isRunning,
-          isSecondBreak: isSecondBreak ?? this.isSecondBreak,
-          asaltoActual: asaltoActual ?? this.asaltoActual);
-}
+final roundConfig = RoundConfig(totalRounds: 2, totalSeconds: 15, secondsBreak: 10);
 
 final timerProvider = StateNotifierProvider<TimerNotifier, RoundCounter>((ref) {
   return TimerNotifier();
 });
 
 class TimerNotifier extends StateNotifier<RoundCounter> {
-  TimerNotifier() : super(RoundCounter(seconds: 15));
+  TimerNotifier() : super(RoundCounter(seconds: roundConfig.totalSeconds));
 
   late Timer _timer;
   bool isActivateTime = false;
@@ -70,7 +40,7 @@ class TimerNotifier extends StateNotifier<RoundCounter> {
 
   void resetTimer() {
     pauseTimer();
-    state = state.copyWith(seconds: 15, asaltoActual: 1);
+    state = state.copyWith(seconds: roundConfig.totalSeconds, asaltoActual: 1);
   }
 
   Future<void> decrease() async {
@@ -78,7 +48,6 @@ class TimerNotifier extends StateNotifier<RoundCounter> {
       int second = state.seconds;
       if (state.isRunning && !state.isSecondBreak) {
         await playCampana(second, 'campana.mp3');
-        // await playCampana(second, 'timeRetroceso.mp3');
         print("Suena: ${player.state}");
       } else if (state.isRunning && state.isSecondBreak) {
         print("Tiempo retroceso");
@@ -89,7 +58,7 @@ class TimerNotifier extends StateNotifier<RoundCounter> {
       state = state.copyWith(seconds: second);
     }
     if (state.seconds == 0 && state.isRunning && !state.isSecondBreak) {
-      state = state.copyWith(seconds: state.secondsReset, isSecondBreak: true);
+      state = state.copyWith(seconds: roundConfig.totalSeconds, isSecondBreak: true);
     }
     print("Antes de siguient asalto");
     if (state.seconds == 0 && state.isRunning && state.isSecondBreak) {
@@ -99,9 +68,9 @@ class TimerNotifier extends StateNotifier<RoundCounter> {
 
   void siguienteAsalto() {
     int asalto = state.asaltoActual + 1;
-    if (asalto <= 2) {
+    if (asalto <= roundConfig.totalRounds) {
       state = state.copyWith(
-          seconds: 15, asaltoActual: asalto, isSecondBreak: false);
+          seconds: roundConfig.totalSeconds, asaltoActual: asalto, isSecondBreak: false);
       print("Siguient Asalto");
     }
   }
